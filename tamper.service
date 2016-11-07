@@ -1,0 +1,11 @@
+[Unit]
+Description=Check that nobody has tampered with boot or MBR
+Requires=basic.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /bin/tamper.bash --check
+
+[Install]
+WantedBy=multi-user.target

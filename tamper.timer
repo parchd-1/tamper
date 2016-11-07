@@ -1,0 +1,8 @@
+[Unit]
+Description=Run tamper check daily
+
+[Timer]
+OnUnitActiveSec=1day
+ 
+[Install]
+WantedBy=timers.target
