@@ -82,7 +82,7 @@ function check() {
 function fail(){
         (
         echo "Warning: boot or MBR tampering detected" >> /etc/motd &&
-        if [ -z "$CLOCKWORK_KEY" ] & [ -z "$SMS_TO" ]; then
+        if [ -n "$CLOCKWORK_KEY" ] & [ -n "$SMS_TO" ]; then
                 curl "https://api.clockworksms.com/http/send.aspx?key=$CLOCKWORK_KEY&to=$SMS_TO&content=Boot+tampering+detected+on+$HOST"
         fi
         ) || exit 5
