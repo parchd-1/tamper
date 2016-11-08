@@ -71,14 +71,14 @@ function check() {
                 rm /tmp/mbr.bak
         else
                 echo "MBR did not validate!" >&2
-                s=ERROR_INVALID
+                s=$ERROR_INVALID
         fi
 
         if check_boot; then
                 rm /tmp/boot.bak
         else
                 echo "/boot did not validate!" >&2
-                s=ERROR_INVALID
+                s=$ERROR_INVALID
         fi
 
         return $s
