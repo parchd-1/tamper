@@ -27,6 +27,11 @@ MBR_DEVICE=""
 SMS_TO=""
 CLOCKWORK_KEY=""
 
+
+ERROR_INVALID=150
+ERROR_INVALID_FAIL_FAILED=151
+ERROR_UNCONFIGURED=6
+
 function get_mbr(){
         dd if=$MBR_DEVICE of=/tmp/mbr.bak bs=512 count=1
 }
@@ -38,7 +43,7 @@ function get_boot(){
 function check_mbr(){
         if [ -z $MBR_DEVICE ]; then
                 echo "\$MBR_DEVICE not configured" >&2
-                exit 9
+                exit $ERROR_UNCONFIGURED
         fi
 
         if [ -e $MBR_LOG ]; then
@@ -46,7 +51,7 @@ function check_mbr(){
                 sha512sum --check --status --strict <(tail -n1 $MBR_LOG)
         else
                 echo "'$MBR_LOG' does not exist" >&2
-                return 1
+                return $ERROR_UNCONFIGURED
         fi
 }
 
@@ -56,7 +61,7 @@ function check_boot(){
                 sha512sum --check --status --strict <(tail -n1 $BOOT_LOG)
         else
                 echo "'$BOOT_LOG' does not exist" >&2
-                return 1
+                return $ERROR_UNCONFIGURED
         fi
 }
 
@@ -66,14 +71,14 @@ function check() {
                 rm /tmp/mbr.bak
         else
                 echo "MBR did not validate!" >&2
-                s=1
+                s=ERROR_INVALID
         fi
 
         if check_boot; then
                 rm /tmp/boot.bak
         else
                 echo "/boot did not validate!" >&2
-                s=1
+                s=ERROR_INVALID
         fi
 
         return $s
@@ -85,8 +90,8 @@ function fail(){
         if [ -n "$CLOCKWORK_KEY" ] & [ -n "$SMS_TO" ]; then
                 curl "https://api.clockworksms.com/http/send.aspx?key=$CLOCKWORK_KEY&to=$SMS_TO&content=Boot+tampering+detected+on+$HOST"
         fi
-        ) || exit 5
-		exit 3
+        ) || exit $ERROR_INVALID_FAIL_FAILED
+		exit $ERROR_INVALID
 }
 
 function update(){
