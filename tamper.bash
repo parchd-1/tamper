@@ -43,7 +43,7 @@ function check_mbr(){
 
         if [ -e $MBR_LOG ]; then
                 get_mbr &&
-                sha512sum -c <(tail -n1 $MBR_LOG)
+                sha512sum --check --status --strict <(tail -n1 $MBR_LOG)
         else
                 echo "'$MBR_LOG' does not exist" >&2
                 return 1
@@ -53,7 +53,7 @@ function check_mbr(){
 function check_boot(){
         if [ -e $BOOT_LOG ]; then
                 get_boot &&
-                sha512sum -c <(tail -n1 $BOOT_LOG)
+                sha512sum --check --status --strict <(tail -n1 $BOOT_LOG)
         else
                 echo "'$BOOT_LOG' does not exist" >&2
                 return 1
